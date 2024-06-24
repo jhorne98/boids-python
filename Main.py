@@ -10,15 +10,15 @@ g_rightMargin = g_width - g_margin
 g_topMargin = g_margin
 g_bottomMargin = g_height - g_margin
 
-g_turnFactor = 0.00005
-g_avoidFactor = 0.000005
-g_matchingFactor = 0.000005
-g_centeringFactor = 0.0000005
-g_maxSpeed = 0.065
-g_minSpeed = 0.03
+g_turnFactor = 0.0005
+g_avoidFactor = 0.00005
+g_matchingFactor = 0.00005
+g_centeringFactor = 0.0000007
+g_maxSpeed = 0.2
+g_minSpeed = 0.05
 
 g_protectedRange = 5
-g_visibleRange = 75
+g_visibleRange = 100
 
 g_numBoids = 40
 
@@ -29,6 +29,7 @@ class Boid:
         self.vx = vx
         self.vy = vy
         self.c = Circle(Point(x, y), 3)
+        self.vec = Line(Point(x, y), Point(vx, vy))
 
     def distance(self, other):
         return math.sqrt((self.x - other.x) * (self.x - other.x) + (self.y - other.y) * (self.y - other.y))
@@ -40,8 +41,8 @@ def main():
     for _n in range(0, g_numBoids):
         x = random.uniform(g_leftMargin, g_rightMargin)
         y = random.uniform(g_topMargin, g_bottomMargin)
-        vx = random.uniform(g_minSpeed, g_maxSpeed)
-        vy = random.uniform(g_minSpeed, g_maxSpeed)
+        vx = random.uniform(-g_minSpeed, g_maxSpeed)
+        vy = random.uniform(-g_minSpeed, g_maxSpeed)
         boidList.append(Boid(x,y,vx,vy))
 
     # start the graphics window, draw the boids
@@ -51,13 +52,11 @@ def main():
 
     while(True):
         for curBoid in boidList:
-            closeDx = 0.0
-            closeDy = 0.0
+            curBoid.vec.undraw()
 
-            xvelAvg = 0.0
-            yvelAvg = 0.0
-            xposAvg = 0.0
-            yposAvg = 0.0
+            closeDx = closeDy = 0.0
+
+            xvelAvg = yvelAvg = xposAvg = yposAvg = 0.0
             neighboringBoids = 0
 
             for otherBoid in boidList:
@@ -116,7 +115,12 @@ def main():
             curBoid.x += curBoid.vx
             curBoid.y += curBoid.vy
             curBoid.c.move(curBoid.vx, curBoid.vy)
+            curBoid.vec = Line(Point(curBoid.x, curBoid.y), Point(curBoid.x + (curBoid.vx * 100), curBoid.y + (curBoid.vy * 100)))
+            curBoid.vec.draw(win)
         update()
+        if(win.checkKey() or win.checkMouse()):
+            break
+    win.close()
 
 if __name__ == "__main__":
     main()

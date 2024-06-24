@@ -4,17 +4,17 @@ import math, random
 g_width = 800.0
 g_height = 600.0
 
-g_margin = 50.0
+g_margin = 75.0
 g_leftMargin = g_margin
 g_rightMargin = g_width - g_margin
 g_topMargin = g_margin
 g_bottomMargin = g_height - g_margin
 
-g_turnFactor = 0.0001
+g_turnFactor = 0.00005
 g_avoidFactor = 0.000005
 g_matchingFactor = 0.000005
 g_centeringFactor = 0.0000005
-g_maxSpeed = 0.06
+g_maxSpeed = 0.065
 g_minSpeed = 0.03
 
 g_protectedRange = 5
@@ -62,16 +62,17 @@ def main():
 
             for otherBoid in boidList:
                 if otherBoid is not curBoid:
-                    dx = curBoid.x - otherBoid.x
-                    dy = curBoid.y - otherBoid.y
-                    if (abs(dx)<g_visibleRange and abs(dy)<g_visibleRange):
+                    dx = abs(curBoid.x - otherBoid.x)
+                    dy = abs(curBoid.y - otherBoid.y)
+                    if (dx<g_visibleRange and dy<g_visibleRange):
+                        dist = curBoid.distance(otherBoid)
                         # separation check
-                        if (curBoid.distance(otherBoid) < g_protectedRange):
+                        if (dist < g_protectedRange):
                             closeDx += curBoid.x - otherBoid.x
                             closeDy += curBoid.y - otherBoid.y
 
                         # alignment and cohesion checks
-                        elif (curBoid.distance(otherBoid) < g_visibleRange):
+                        elif (dist < g_visibleRange):
                             xvelAvg += otherBoid.vx
                             yvelAvg += otherBoid.vy
                             xposAvg += otherBoid.x
